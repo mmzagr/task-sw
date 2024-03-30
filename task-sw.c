@@ -15,6 +15,7 @@ int connected = 0;
 int tcp_socket;
 char udp_ip[INET_ADDRSTRLEN], tcp_ip[INET_ADDRSTRLEN], log_file_name[PATH_MAX], magic_bytes[MAGIC_SIZE];
 unsigned short udp_port, tcp_port;
+pthread_mutex_t socket_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 int main(int argc, char* argv[]) {
     if (!parse_args(argc, argv))
@@ -34,6 +35,7 @@ void start_udp_server(void) {
     int serv_socket, on = 1;
     struct sockaddr_in serv_addr, clnt_addr;
     char rcvd_buf[MAX_DATA_SIZE + MAGIC_SIZE];
+    pthread_t tid;
     socklen_t clnt_addr_len = sizeof(clnt_addr);
 
     memset(&serv_addr, '\0', sizeof(serv_addr));
@@ -79,9 +81,9 @@ void start_udp_server(void) {
         memcpy(rcvd_buf_cpy, rcvd_buf, n + MAGIC_SIZE);
 
         struct msg_to_tcp thread_args = {n + MAGIC_SIZE, rcvd_buf_cpy};
-        pthread_t thread_id = pthread_create(&thread_id, NULL, send_data_to_tcp_server, (void *)&thread_args);
-        if (thread_id != 0)
-            handle_error_en(thread_id, "pthread_create");
+        int result = pthread_create(&tid, NULL, send_data_to_tcp_server, (void *)&thread_args);
+        if (result != 0)
+            handle_error_en(result, "pthread_create");
     }
 }
 
@@ -90,21 +92,26 @@ void *send_data_to_tcp_server(void *arg) {                                      
     char *msg = msgToTcp -> msg;
     ssize_t len = msgToTcp -> len;
 
+    pthread_mutex_lock(&socket_mutex);
+
     ssize_t bytes_send = send(tcp_socket, msg, len, 0);
     if (bytes_send == -1)
         logger("could not send data to the TCP server: %s", strerror(errno));
-
-    char *hex_bytes = buf_to_hex_str(msg, len);
-    logger("data of %zd bytes was sent to the TCP server: %s ok", len, hex_bytes);
-    free(hex_bytes);
+    else {
+        char *hex_bytes = buf_to_hex_str(msg, len);
+        logger("data of %zd bytes was sent to the TCP server: %s", len, hex_bytes);
+        free(hex_bytes);
+    }
+    pthread_mutex_unlock(&socket_mutex);
     free(msg);
     return NULL;
 }
 
 void start_tcp_connection() {
-    pthread_t thread_id = pthread_create(&thread_id, NULL, connect_to_tcp_server, NULL);
-    if (thread_id != 0)
-        handle_error_en(thread_id, "pthread_create");
+    pthread_t tid;
+    int result = pthread_create(&tid, NULL, connect_to_tcp_server, NULL);
+    if (result != 0)
+        handle_error_en(result, "pthread_create");
 }
 
 void *connect_to_tcp_server(void *arg) {
