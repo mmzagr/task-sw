@@ -1,7 +1,7 @@
 #ifndef TASK_SW_TASK_SW_H
 #define TASK_SW_TASK_SW_H
 
-#define MIN_DATA_SIZE           1
+#define MIN_DATA_SIZE           4
 #define MAX_DATA_SIZE           128
 #define MAGIC_SIZE              4
 #define MAX_RETRIES             UINT_MAX
