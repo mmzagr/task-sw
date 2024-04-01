@@ -29,7 +29,7 @@ unsigned short str_to_u_short(const char *str) {
     return (unsigned short)ul_value;
 }
 
-//return the context of buffer in HEX format (in allocated memory)
+//return the context of the buffer in HEX format (in an allocated memory)
 char *buf_to_hex_str(const char *buffer, size_t length) {
     char *dst = calloc(length * 3 + 2, sizeof(char));
 
