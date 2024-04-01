@@ -154,7 +154,7 @@ void *connect_to_tcp_server(void *arg) {
                 break;
             }
 
-            ssize_t bytes = recv(tcp_socket, &buf, sizeof(buf) , 0);
+            ssize_t bytes = recv(tcp_socket, &buf, sizeof(buf), 0);
             if (bytes == -1) {                                                                    //recv error, network error, interrupted, etc...
                 connected = 0;
                 close(tcp_socket);
@@ -177,7 +177,7 @@ void *connect_to_tcp_server(void *arg) {
     return NULL;
 }
 
-int parse_args(int argc, char*argv[]) {
+int parse_args(int argc, char *argv[]) {
     if (argc < 7) {
         fprintf(stderr, "Usage: %s <UDP IP> <UDP port> <TCP IP> <TCP port> <log file name> <magic bytes>\n", argv[0]);
         return 0;

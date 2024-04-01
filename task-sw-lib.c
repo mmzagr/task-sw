@@ -31,7 +31,7 @@ unsigned short str_to_u_short(const char *str) {
 
 //return the context of buffer in HEX format (in allocated memory)
 char *buf_to_hex_str(const char *buffer, size_t length) {
-    char *dst = calloc(length * 3 + 1, sizeof(char));
+    char *dst = calloc(length * 3 + 2, sizeof(char));
 
     strcpy(dst, "[");
     for (size_t i = 0; i < length; ++i) {
