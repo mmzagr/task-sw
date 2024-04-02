@@ -6,6 +6,7 @@
 #define MAGIC_SIZE              4
 #define MAX_RETRIES             UINT_MAX
 #define RETRY_INTERVAL_SEC      3
+#define VERSION                 "1.0"
 
 #define handle_error(msg)           do { perror(msg); log_close(); exit(EXIT_FAILURE); } while (0)
 #define handle_error_en(en, msg)    do { errno = en; perror(msg); log_close(); exit(EXIT_FAILURE); } while (0)

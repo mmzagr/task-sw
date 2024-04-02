@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
         exit(EXIT_FAILURE);
 
     log_init(log_file_name);
-    printf("started ok, pid %d, all further output will be redirected to the log file: %s\n", getpid(), log_file_name);
+    printf("%s version %s started ok, pid %d, all further output will be redirected to the log file: %s\n", argv[0], VERSION, getpid(), log_file_name);
     logger("started successfully, pid %d", getpid());
 
     start_tcp_connection();
